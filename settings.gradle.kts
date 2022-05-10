@@ -1,1 +1,1 @@
-rootProject.name = "Secret-IDE-Plugin"
+rootProject.name = "Secret-IDE"
