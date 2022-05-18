@@ -1,22 +1,15 @@
-/*
- * Created by JFormDesigner on Fri Apr 15 17:42:49 CEST 2022
- */
 package io.digiline.secretideplugin
 
 import Icons.SdkIcons
 import com.intellij.ui.IdeBorderFactory
-import com.intellij.ui.JBCardLayout
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
-import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.JBUI.Borders
 import com.moandjiezana.toml.Toml
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -66,7 +59,7 @@ class SecretNetworkContractProjectCreationWizard : JPanel() {
     contractTemplateLabel = JLabel()
     scrollPane1 = JBScrollPane()
     layout = GridLayoutManager(2, 1, JBUI.emptyInsets(), -1, -1)
-    contractTemplateLabel!!.text = bundle.getString("templateName")
+    contractTemplateLabel!!.text = "Contract Template:"
     add(
       contractTemplateLabel, GridConstraints(
         0, 0, 1, 1,

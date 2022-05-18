@@ -12,7 +12,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <moduleType id="SCRT_NETWORK_MODULE_TYPE"
                     implementationClass="io.digiline.secretideplugin.SecretIDEModuleType"/>
-        <toolWindow id="Build and Deploy" secondary="true" icon="AllIcons.General.Modified" anchor="right"
+        <moduleType id="SCRT_NETWORK_SNIP721_MODULE_TYPE"
+                    implementationClass="io.digiline.secretideplugin.SecretIDESNIP721ModuleType"/>
+        <toolWindow id="Deploy and Instantiate" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="io.digiline.secretideplugin.BuildAndDeployFactory"/>
         <!--        <configurationType implementation="io.digiline.secretideplugin.makefileutils.MakefileConfigurationType"/>-->
         <configurationType implementation="io.digiline.secretideplugin.SecretNetworkContractConfigurationType"/>

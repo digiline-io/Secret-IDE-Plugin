@@ -1,16 +1,7 @@
 package io.digiline.secretideplugin
 
-import com.intellij.execution.ExecutionBundle
-import com.intellij.execution.configuration.EnvironmentVariablesComponent
-import com.intellij.execution.configuration.EnvironmentVariablesData
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.TextFieldWithBrowseButton
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.ui.components.CheckBox
 import com.intellij.ui.components.Label
 import com.intellij.ui.layout.CCFlags
 import com.intellij.ui.layout.LayoutBuilder

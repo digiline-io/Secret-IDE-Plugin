@@ -1,27 +1,18 @@
 package io.digiline.secretideplugin
 
 import cloneRepo
-import com.intellij.execution.RunManager
-import com.intellij.execution.RunnerAndConfigurationSettings
-import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
-import com.intellij.openapi.roots.ModifiableRootModel
-import createProjectFromSubFolderInRepo
-import createProjectUsingCargoGenerate
-import java.nio.file.Paths
-import com.intellij.execution.process.ProcessAdapter
-import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Disposer
-import com.intellij.structuralsearch.PredefinedConfigurationUtil.createConfiguration
-
+import createProjectFromSubFolderInRepo
+import createProjectUsingCargoGenerate
+import java.nio.file.Paths
 
 class SecretIDEModuleBuilder : ModuleBuilder() {
   var template: ContractTemplate? = null;

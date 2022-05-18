@@ -3,7 +3,6 @@ package io.digiline.secretideplugin
 import Icons.SdkIcons
 import com.intellij.execution.configurations.*
 
-
 class SecretNetworkContractConfigurationType : ConfigurationTypeBase(
   "SecretNetworkContract",
   "Secret Network",
