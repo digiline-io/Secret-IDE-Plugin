@@ -22,6 +22,13 @@ fun cloneRepo(repo: String, path: Path, projectName: String, doReplace: Boolean 
   commandLine.createProcess().waitFor()
   if (doReplace)
     updateCargoToml(path, projectName)
+  commandLine.exePath = "rm"
+  commandLine.addParameter("-rf")
+  commandLine.addParameter(".git")
+  commandLine.createProcess().waitFor()
+  commandLine.exePath = "git"
+  commandLine.addParameter("init")
+  commandLine.createProcess().waitFor()
 }
 
 /**

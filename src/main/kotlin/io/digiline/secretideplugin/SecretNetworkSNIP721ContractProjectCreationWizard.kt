@@ -81,15 +81,5 @@ class SecretNetworkSNIP721ContractProjectCreationWizard : JPanel() {
         null, null, null
       )
     )
-//    scrollPane1!!.setViewportView(contractTemplate)
-//    add(
-//      scrollPane1, GridConstraints(
-//        1, 0, 1, 1,
-//        GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
-//        GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW,
-//        GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW,
-//        null, null, null
-//      )
-//    )
   }
 }
