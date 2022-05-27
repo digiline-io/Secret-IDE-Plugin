@@ -19,6 +19,7 @@ class SecretNetworkContractConfigurationFactory(type: SecretNetworkContractConfi
   override fun createConfiguration(name: String?, template: RunConfiguration): RunConfiguration {
     val config = super.createConfiguration(name, template) as SecretNetworkContractConfiguration
     config.commandConfiguration = config.commandConfiguration.clone()
+    config.commandConfiguration.command = name ?: "";
     return config
   }
-}
+}k

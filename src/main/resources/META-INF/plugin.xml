@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>io.digiline.secretideplugin</id>
     <name>Secret-IDE</name>
-    <vendor url="https://digiline.io">digiline</vendor>
+    <vendor url="https://digiline.io">Digiline</vendor>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
@@ -16,21 +16,12 @@
                     implementationClass="io.digiline.secretideplugin.SecretIDESNIP721ModuleType"/>
         <toolWindow id="Deploy and Instantiate" secondary="true" icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="io.digiline.secretideplugin.BuildAndDeployFactory"/>
-        <!--        <configurationType implementation="io.digiline.secretideplugin.makefileutils.MakefileConfigurationType"/>-->
         <configurationType implementation="io.digiline.secretideplugin.SecretNetworkContractConfigurationType"/>
     </extensions>
 
-    <!--    <extensionPoints>-->
-    <!--        <extensionPoint qualifiedName="io.digiline.secretideplugin.runConfigurationExtension"-->
-    <!--                        interface="io.digiline.secretideplugin.MakefileConfigurationExtension"-->
-    <!--                        dynamic="true"/>-->
-    <!--    </extensionPoints>-->
-
     <description>
         <![CDATA[
-            This plugin enables the developer to easily build, deploy and instantiate contracts on the Secret Network, and provides an integrated GUI to view the contracts you deployed and their instances.
+            This plugin enables a developer to easily build, deploy and instantiate contracts on the Secret Network, and provides an integrated GUI to view the contracts you deployed and their instances.
         ]]>
     </description>
-
-
 </idea-plugin>

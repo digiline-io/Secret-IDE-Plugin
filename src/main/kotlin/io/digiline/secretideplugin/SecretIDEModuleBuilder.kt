@@ -10,6 +10,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Disposer
+import createBuildActionsFromMakefile
 import createProjectFromSubFolderInRepo
 import createProjectUsingCargoGenerate
 import java.nio.file.Paths
@@ -28,7 +29,7 @@ class SecretIDEModuleBuilder : ModuleBuilder() {
         override fun run(indicator: ProgressIndicator) {
           indicator.isIndeterminate = true
           val template = template!!
-          val path = Paths.get(project.basePath)
+          val path = Paths.get(project.basePath!!)
           when (template.type) {
             RepoType.url -> if (template.subfolder.isEmpty()) {
               cloneRepo(template.url, path, name)
@@ -37,6 +38,7 @@ class SecretIDEModuleBuilder : ModuleBuilder() {
             }
             RepoType.cargoGenerate -> createProjectUsingCargoGenerate(template.url, path)
           }
+          createBuildActionsFromMakefile(project, path)
         }
       }.queue()
     }

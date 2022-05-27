@@ -1,6 +1,7 @@
 package io.digiline.secretideplugin
 
 import cloneRepo
+import com.intellij.execution.RunManager
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
@@ -15,6 +16,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.io.readText
 import com.intellij.util.io.write
+import createBuildActionsFromMakefile
 import java.util.UUID.randomUUID
 import kotlin.math.roundToInt
 
@@ -66,10 +68,10 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
           secretcli config keyring-backend test
           secretcli config broadcast-mode block
           read -r -s -p "Enter wallet seed for deployment (seed will be hidden): " seed
-          echo "y" | secretcli keys delete SecretIDE-Deployment
+          secretcli keys delete SecretIDE-Deployment -y
           echo "${'$'}seed" | secretcli keys add SecretIDE-Deployment --recover
           clear
-          codeId=${'$'}(echo "y" | secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas "${'$'}gas" | jq '.logs[0].events[0].attributes[3].value')
+          codeId=${'$'}(secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas "${'$'}gas" -y | jq '.logs[0].events[0].attributes[3].value')
           echo "Contract stored successfully! Code ID: ${'$'}codeId"
           initMsg=${'$'}(cat init.json)
           secretcli tx compute instantiate "${'$'}codeId" --from SecretIDE-Deployment --gas "${'$'}gas" "${'$'}initMsg"
@@ -121,6 +123,19 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
               "pub const MINT_COST: u128 = ${data!!.price.text.toLong() * 1_000_000}"
             )
         )
+        createBuildActionsFromMakefile(project, path)
+        val runManager = RunManager.getInstance(project)
+        val config = runManager.createConfiguration(
+          "quick-deploy",
+          SecretNetworkContractConfigurationFactory(
+            SecretNetworkContractConfigurationType()
+          ),
+        )
+        runManager.addConfiguration(config)
+        runManager.selectedConfiguration = config
+        var makefileContents = path.resolve("Makefile").readText()
+        makefileContents += "\n\nquick-deploy:\n\tbash ./deploy.sh"
+        path.resolve("Makefile").write(makefileContents)
       }
     }.queue()
   }
