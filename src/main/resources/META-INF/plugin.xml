@@ -6,8 +6,7 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
-<!--    <depends>org.rust.lang</depends>-->
-<!--    <depends>org.toml.lang</depends>-->
+    <depends>org.rust.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <moduleType id="SCRT_NETWORK_MODULE_TYPE"
