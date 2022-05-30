@@ -7,7 +7,7 @@ import com.intellij.ui.content.ContentFactory
 
 class BuildAndDeployFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    val buildAndDeployPanel = BuildAndDeployPanel(project, toolWindow)
+    val buildAndDeployPanel = BuildAndDeployPanel(project)
     val contentFactory = ContentFactory.SERVICE.getInstance()
     val content = contentFactory.createContent(buildAndDeployPanel, "", false)
     toolWindow.contentManager.addContent(content)

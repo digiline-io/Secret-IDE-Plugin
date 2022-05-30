@@ -1,20 +1,18 @@
 package io.digiline.secretideplugin
 
-import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.separatorAndComment
+import org.jetbrains.plugins.terminal.TerminalView
 import java.io.File
 import java.io.IOException
 import javax.swing.*
-import org.jetbrains.plugins.terminal.TerminalView
 
-class BuildAndDeployPanel(private val project: Project, private val toolWindow: ToolWindow) :
+class BuildAndDeployPanel(private val project: Project) :
     SimpleToolWindowPanel(true, false) {
   private val codeIdModel = SpinnerNumberModel(0, 0, 99_999, 1)
   private val codeID: JSpinner = JSpinner(codeIdModel)
@@ -90,8 +88,6 @@ class BuildAndDeployPanel(private val project: Project, private val toolWindow: 
       val shell = terminalView.createLocalShellWidget(project.basePath, "Instantiation")
       shell.executeCommand("clear")
       shell.executeCommand(command)
-      shell.handleAnyKeyPressed()
-      shell.close()
     } catch (e: Exception) {
       e.printStackTrace()
     }
