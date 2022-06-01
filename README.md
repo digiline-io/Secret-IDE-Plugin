@@ -27,31 +27,24 @@ After opening Secret Contract Starter you should see this:
 
 ![secret-contract-starter](/documentation-imgs/secret-contract-starter.png)
 
-Now you're ready to modify this starter however you see fit. If you are new to Secret contracts then we've got a few steps you can follow below to deploy your first contract.
+Now you're ready to modify this starter however you see fit. If you are new to Secret contracts then we've got a few steps you can follow below to deploy your first, "hello user" contract.
 
-1. In contracts.rs:
-
-replace the init function with 
+First you're going to replace the default testing handle with a handle function that works with a Register message. In contract.rs you look for the handle function and look for the match statement, it should look something like this:
 
 ```rust
-pub fn init<S: Storage, A: Api, Q: Querier>(
+pub fn handle<S: Storage, A: Api, Q: Querier>(
     deps: &mut Extern<S, A, Q>,
     env: Env,
-    msg: InitMsg,
-) -> StdResult<InitResponse> {
-    let config = Config {
-        owner: deps.api.canonical_address(&env.message.sender)?,
-    };
-
-    let prng_seed: Vec<u8> = sha_256(base64::encode(msg.entropy).as_bytes()).to_vec();
-    save(&mut deps.storage, CONFIG_KEY, &config)?;
-    save(&mut deps.storage, PRNG_SEED_KEY, &prng_seed)?;
-
-    Ok(InitResponse::default())
+    msg: HandleMsg,
+) -> StdResult<HandleResponse> {
+    match msg {
+        HandleMsg::HandleEx {} => handle_ex(deps, env), // <------- this is what you need to look for
+    }
 }
 ```
 
-replace the handle function with
+You can then replace HandleEx with Register and add a name argument, then change the function called to something like handle_register. If you did this correctly the function should look something like this:
+
 ```rust
 pub fn handle<S: Storage, A: Api, Q: Querier>(
     deps: &mut Extern<S, A, Q>,
@@ -64,16 +57,18 @@ pub fn handle<S: Storage, A: Api, Q: Querier>(
 }
 ```
 
-replace the handle_ex function with
+And now it's time to actually create the handle_register function, if you look at the code in contract.rs you should see a function called handle_ex. Rename that function to handle_register and add a name argument, then change its code to store the name argument under the key with the user's address in storage and create a viewing key for that information afterwards. If you're unsure about how to do that, the code should look something like this:
+
 ```rust
 /// Returns HandleResult
 ///
-/// Handle registering a contract
+/// Handle registering a user
 ///
 /// # Arguments
 ///
 /// * `deps` - mutable reference to Extern containing all the contract's external dependencies
 /// * `env` - Env of contract's environment
+/// * `name` - the name of the user
 pub fn handle_register<S: Storage, A: Api, Q: Querier>(
     deps: &mut Extern<S, A, Q>,
     env: Env,
@@ -86,7 +81,8 @@ pub fn handle_register<S: Storage, A: Api, Q: Querier>(
 }
 ```
 
-replace the query function with
+Now it's time to create the query; look for the function called query and in the match expression replace QueryEx with somethign like Secret Message that takes two parameters, the viewing key and the user's address. The funtion should now look like this:
+
 ```rust
 pub fn query<S: Storage, A: Api, Q: Querier>(
     deps: &Extern<S, A, Q>,
@@ -97,13 +93,15 @@ pub fn query<S: Storage, A: Api, Q: Querier>(
     }
 }
 ```
-replace the query_ex function with
-```rust 
+
+Now let's make your query actually return something, in this small tutorial the goal is to just send the user their message back if the correct viewing key is sent, so you can replace the  the query_ex function with the following:
+```rust
 fn query_secret_message<S: Storage, A: Api, Q: Querier>(deps: &Extern<S, A, Q>, viewing_key: String, user: HumanAddr) -> StdResult<QueryAnswer> {
     let addr = deps.api.canonical_address(&user)?;
     let read_key = ReadonlyPrefixedStorage::new(PREFIX_VIEW_KEY, &deps.storage);
     check_key(&deps.storage, &addr, viewing_key)?;
-    let msg = may_load(&read_key, addr.as_slice())?.unwrap_or_else(|| "".to_string());
+    let names_key = ReadonlyPrefixedStorage::new(PREFIX_NAMES, &deps.storage);
+    let msg = may_load(&names_key, addr.as_slice())?.unwrap_or_else(|| "".to_string());
 
     Ok(QueryAnswer::SecretMessage {
         message: msg
@@ -111,25 +109,85 @@ fn query_secret_message<S: Storage, A: Api, Q: Querier>(deps: &Extern<S, A, Q>, 
 }
 ```
 
-2. In msg.rs:
+This function reads the key for the specified user, checks whether it's the same as the key specified and if it is, it reads the message and sends it to the user.
+
+Now you're done with your contract's code, but there are a few things missing, all of the messages you used above and all the response types need to be defined, so to do that you should edit the msg.rs file. 
+
+To do this, replace everything after InitMsg with the following:
+```rust
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum HandleMsg {
+    Register {
+        name: String,
+    },
+}
+
+#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[serde(rename_all = "snake_case")]
+pub enum HandleAnswer {
+    ViewingKey {
+        key: String,
+    },
+}
 
 
 
-### Deploying to Testnet
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum QueryMsg {
+    SecretMessage {
+        user: HumanAddr,
+        viewing_key: String,
+    }
+}
 
-### Deploying to Mainnet
+#[derive(Serialize, Deserialize, JsonSchema, Debug)]
+#[serde(rename_all = "snake_case")]
+pub enum QueryAnswer {
+    SecretMessage {
+        message: String,
+    }
+}
+```
+
+There's one final thing left, you may have noticed that we use the storage key PREFIX_NAMES, you will need to define that in state.rs, to do so just add 
+```rust
+pub static PREFIX_NAMES: &[u8] = b"names";
+```
+
+after the following line: 
+```rust
+pub const PREFIX_VIEW_KEY: &[u8] = b"viewkeys";
+```
+
+if anything needs to be imported do so by pressing alt + shift + enter or option (⌥) + shift + enter, do this in both contract.rs and msg.rs.
+
+### Building your contract
+If you look at the top right portion of your IDE you will see a dropdown with a few options, as well as a green "start button", select the option that says build and click the start button to compile your contract.
+
+### Deploying
+On the bottom right side of your screen you should see a panel with the name "Deploy and Instantiate". If you click that you should be able to see a form where you input your wallet seed (please don't use your main wallet while Secret IDE is in beta) and you should see a select box with two options, pulsar-2 testnet and secret-4 mainnet. Select the network you want (we recommend testnet while developing your contract and mainnet once you're done), then  press "Deploy". In the future we're planning to add an option to deploy to localsecret as well.
 
 ### Instantiating a Contract
+Once the contract is deployed, you should see the code id in the terminal, copy that code ID and input it in the code ID field in the same window, then give your contract a label (this needs to be unique on the secret network, so maybe append the date and time at the end) and an input message. The input message is a JSON formatted message with every argument needed to instantiate your contract.
 
 ## Creating a common SNIP721 Contract from a Form based GUI
 
 At the project start screen, instead of clicking 'Secret Network Contract', open the project named, 'Secret Network SNIP721 Contract'. Now you will see a form that provides all options for creating SNIP721 contract, also knowns commonly as NFTs.
 
 ## Reporting Issues
+Please report any issues on [our github](https://github.com/digiline-io/Secret-IDE-Plugin) using the issue templates we defined.s
 
 ## Intellij IDEA vs. VSCode
+This question is asked very often; IntelliJ IDEA is an IDE while VSCode is a good text editor. IntelliJ IDEA provides a lot of features that make development easier once you're used to it, this includes but is not limited to: 
 
-## Known IntelliJ IDEA Issues
-* when running from the web browser, you likely will need to resize your window before the IDE will go full screen
+- Better Rust support out-of-the-box with the rust plugin
+- Better Intellisense, the IDE analyzes the code in real time, it understands the code, making development much easier
+- It's "batteries included", every little thing you may need is usually included by default or is just a plugin away
 
-* remove the startup terms and conditions windows
+## Known Secret IDE/IntelliJ IDEA Issues
+Most issues only show up when running the docker image, and connecting to the browser, all of those issues are due to issues with the Jetbrains Projector, if any of those issues are deal-breakers to you please consider running the standalone IDE:
+
+- You likely will need to resize your window before the IDE will go full screen, this happens because Jetbrains Projector assumes the screen resolution to be very small by default
+- Sometimes some modals get stuck in an in-between-state where they appear and disappear, this can be solved by just pressing escape a few times
