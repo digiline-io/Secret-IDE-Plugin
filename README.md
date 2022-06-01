@@ -187,7 +187,8 @@ This question is asked very often; IntelliJ IDEA is an IDE while VSCode is a goo
 - It's "batteries included", every little thing you may need is usually included by default or is just a plugin away
 
 ## Known Secret IDE/IntelliJ IDEA Issues
-Most issues only show up when running the docker image, and connecting to the browser, all of those issues are due to issues with the Jetbrains Projector, if any of those issues are deal-breakers to you please consider running the standalone IDE:
+There are some known issues when running the IDE in the web browser:
+* You likely will need to resize your window before the IDE will go full screen, the IDE starts with a small default resolution when running in the browser.
+* Sometimes some modals get stuck in an in-between-state where they appear and disappear, this can be solved by just pressing escape a few times
 
-- You likely will need to resize your window before the IDE will go full screen, this happens because Jetbrains Projector assumes the screen resolution to be very small by default
-- Sometimes some modals get stuck in an in-between-state where they appear and disappear, this can be solved by just pressing escape a few times
+You can also run the Secret IDE plugin to avoid these browser issues
