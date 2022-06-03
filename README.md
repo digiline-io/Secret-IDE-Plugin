@@ -9,7 +9,7 @@ This plugin enables a developer to easily build, deploy and instantiate contract
 
 ### Running the IDE
 
-You can either run the pluging on your local version of IntelliJ IDEA by installing the Secret IDE from the plugins marketplace. Search for the Secret IDE in the plugins marketplace.
+You can either run the plugin on your local version of IntelliJ IDEA by installing the Secret IDE from the plugins marketplace. Search for the Secret IDE in the plugins marketplace.
 
 Or you can pull the docker image and run the docker container. The docker container allows you to connect to the IDE in your web browser by visiting https://localhost:8888. To pull the image run:
 
@@ -19,7 +19,7 @@ To run the container, run:
 
 `docker run -p 8888:8888 -v $(PWD)/data:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
 
-### Creating Your First Contract 
+### Creating Your First Contract
 
 You can quickly start from a contract template. A library of contract templates is located in the project folder named, 'Secret Network Contract' The simplest contract template is 'Secret Contract Starter'
 
@@ -81,7 +81,7 @@ pub fn handle_register<S: Storage, A: Api, Q: Querier>(
 }
 ```
 
-Now it's time to create the query; look for the function called query and in the match expression replace QueryEx with somethign like Secret Message that takes two parameters, the viewing key and the user's address. The funtion should now look like this:
+Now it's time to create the query; look for the function called query and in the match expression replace QueryEx with something like Secret Message that takes two parameters, the viewing key and the user's address. The function should now look like this:
 
 ```rust
 pub fn query<S: Storage, A: Api, Q: Querier>(
@@ -111,7 +111,7 @@ fn query_secret_message<S: Storage, A: Api, Q: Querier>(deps: &Extern<S, A, Q>, 
 
 This function reads the key for the specified user, checks whether it's the same as the key specified and if it is, it reads the message and sends it to the user.
 
-Now you're done with your contract's code, but there are a few things missing, all of the messages you used above and all the response types need to be defined, so to do that you should edit the msg.rs file. 
+Now you're done with your contract's code, but there are a few things missing, all of the messages you used above and all the response types need to be defined, so to do that you should edit the msg.rs file.
 
 To do this, replace everything after InitMsg with the following:
 ```rust
@@ -151,12 +151,12 @@ pub enum QueryAnswer {
 }
 ```
 
-There's one final thing left, you may have noticed that we use the storage key PREFIX_NAMES, you will need to define that in state.rs, to do so just add 
+There's one final thing left, you may have noticed that we use the storage key PREFIX_NAMES, you will need to define that in state.rs, to do so just add
 ```rust
 pub static PREFIX_NAMES: &[u8] = b"names";
 ```
 
-after the following line: 
+after the following line:
 ```rust
 pub const PREFIX_VIEW_KEY: &[u8] = b"viewkeys";
 ```
@@ -174,13 +174,13 @@ Once the contract is deployed, you should see the code id in the terminal, copy 
 
 ## Creating a common SNIP721 Contract from a Form based GUI
 
-At the project start screen, instead of clicking 'Secret Network Contract', open the project named, 'Secret Network SNIP721 Contract'. Now you will see a form that provides all options for creating SNIP721 contract, also knowns commonly as NFTs.
+At the project start screen, instead of clicking 'Secret Network Contract', open the project named, 'Secret Network SNIP721 Contract'. Now you will see a form that provides all options for creating SNIP721 contract, also known commonly as NFTs.
 
 ## Reporting Issues
-Please report any issues on [our github](https://github.com/digiline-io/Secret-IDE-Plugin) using the issue templates we defined.s
+Please report any issues on [our github](https://github.com/digiline-io/Secret-IDE-Plugin) using the issue templates we defined.
 
 ## Intellij IDEA vs. VSCode
-This question is asked very often; IntelliJ IDEA is an IDE while VSCode is a good text editor. IntelliJ IDEA provides a lot of features that make development easier once you're used to it, this includes but is not limited to: 
+This question is asked very often; IntelliJ IDEA is an IDE while VSCode is a good text editor. IntelliJ IDEA provides a lot of features that make development easier once you're used to it, this includes but is not limited to:
 
 - Better Rust support out-of-the-box with the rust plugin
 - Better Intellisense, the IDE analyzes the code in real time, it understands the code, making development much easier
