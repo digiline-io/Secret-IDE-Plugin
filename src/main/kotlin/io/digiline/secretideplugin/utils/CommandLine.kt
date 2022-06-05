@@ -163,7 +163,7 @@ fun createProjectFromSubFolderInRepo(
 }
 
 fun getTmpDir(): Path {
-  val tmpFileName = Instant.now().toString()
+  val tmpFileName = Instant.now().toString().replace(':', '-')
   return Paths.get("/tmp/$tmpFileName")
 }
 
