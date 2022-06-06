@@ -9,15 +9,19 @@ This plugin enables a developer to easily build, deploy and instantiate contract
 
 ### Running the IDE
 
-You can either run the plugin on your local version of IntelliJ IDEA by installing the Secret IDE from the plugins marketplace. Search for the Secret IDE in the plugins marketplace.
+#### Using a Docker container (**recommended**)
 
-Or you can pull the docker image and run the docker container. The docker container allows you to connect to the IDE in your web browser by visiting https://localhost:8888. To pull the image run:
+You can pull the docker image and run the docker container. The docker container allows you to connect to the IDE in your web browser by visiting https://localhost:8888. To pull the image run:
 
 `docker pull ghcr.io/digiline-io/secret-ide:latest`
 
 To run the container, run:
 
 `docker run -p 8888:8888 -v $(PWD)/data:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
+
+#### By installing the Secret IDE plugin
+
+You can run the plugin on your local version of IntelliJ IDEA by installing the Secret IDE from the plugins marketplace. Search for the Secret IDE in the plugins marketplace.
 
 ### Creating Your First Contract
 
