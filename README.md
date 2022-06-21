@@ -170,8 +170,12 @@ if anything needs to be imported do so by pressing alt + shift + enter or option
 ### Building your contract
 If you look at the top right portion of your IDE you will see a dropdown with a few options, as well as a green "start button", select the option that says build and click the start button to compile your contract.
 
+![compile-your-contract](/documentation-imgs/compile.png)
+
 ### Deploying
 On the bottom right side of your screen you should see a panel with the name "Deploy and Instantiate". If you click that you should be able to see a form where you input your wallet seed (please don't use your main wallet while Secret IDE is in beta) and you should see a select box with two options, pulsar-2 testnet and secret-4 mainnet. Select the network you want (we recommend testnet while developing your contract and mainnet once you're done), then  press "Deploy". In the future we're planning to add an option to deploy to localsecret as well.
+
+![deploy-and-instantiate](/documentation-imgs/deploy_and_instantiate.png)
 
 ### Instantiating a Contract
 Once the contract is deployed, you should see the code id in the terminal, copy that code ID and input it in the code ID field in the same window, then give your contract a label (this needs to be unique on the secret network, so maybe append the date and time at the end) and an input message. The input message is a JSON formatted message with every argument needed to instantiate your contract.
