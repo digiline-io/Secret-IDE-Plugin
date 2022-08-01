@@ -17,7 +17,7 @@ You can pull the docker image and run the docker container. The docker container
 
 To run the container, run:
 
-`docker run -p 8888:8888 -v $(PWD)/data:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
+`docker run -p 8888:8888 -v ${PWD}/data:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
 
 #### By installing the Secret IDE plugin
 
