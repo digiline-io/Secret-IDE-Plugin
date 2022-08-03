@@ -15,9 +15,15 @@ You can pull the docker image and run the docker container. The docker container
 
 `docker pull ghcr.io/digiline-io/secret-ide:latest`
 
+To create a container where the projects you're working on will be stored, run: 
+
+**this step is required**, please don't ignore it, Secret-IDE will not work if you don't use a docker volume as a bind.
+
+`docker volume create --drive local --opt type=none --opt device=${PWD}/data --opt o=bind secret_ide`
+
 To run the container, run:
 
-`docker run -p 8888:8888 -v ${PWD}/data:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
+`docker run -p 8888:8888 -v secret_ide:/home/secret-ide-user/ -it ghcr.io/digiline-io/secret-ide:latest`
 
 #### By installing the Secret IDE plugin
 
