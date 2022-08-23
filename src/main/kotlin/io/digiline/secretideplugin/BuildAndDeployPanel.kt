@@ -48,7 +48,7 @@ class BuildAndDeployPanel(private val project: Project) :
       shell.executeCommand("clear")
       if (networkSelector.selectedItem == "Pulsar-2 Testnet") {
         shell.executeCommand("secretcli config chain-id pulsar-2")
-        shell.executeCommand("secretcli config node http://rpc.pulsar.griptapejs.com:26657")
+        shell.executeCommand("secretcli config node https://rpc.pulsar.scrttestnet.com")
       } else {
         shell.executeCommand("secretcli config chain-id secret-4")
         shell.executeCommand("secretcli config node https://scrt-validator.digiline.io:26657")

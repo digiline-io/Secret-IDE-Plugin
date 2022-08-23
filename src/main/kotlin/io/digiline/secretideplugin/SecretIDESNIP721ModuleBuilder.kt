@@ -59,7 +59,7 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
           if [[ "testnet" == "${'$'}network" ]]; then
             echo "Deploying to testnet"
             secretcli config chain-id pulsar-2
-            secretcli config node http://rpc.pulsar.griptapejs.com:26657
+            secretcli config node https://rpc.pulsar.scrttestnet.com
           else
             echo "Deploying to mainnet"
             secretcli config chain-id secret-4
