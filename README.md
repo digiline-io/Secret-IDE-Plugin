@@ -19,7 +19,7 @@ To create a container where the projects you're working on will be stored, run:
 
 **this step is required**, please don't ignore it, Secret-IDE will not work if you don't use a docker volume as a bind.
 
-`docker volume create --drive local --opt type=none --opt device=${PWD}/data --opt o=bind secret_ide`
+`docker volume create --driver local --opt type=none --opt device=${PWD}/data --opt o=bind secret_ide`
 
 To run the container, run:
 
