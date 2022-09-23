@@ -16,6 +16,8 @@ class BuildAndDeployPanel(private val project: Project) : SimpleToolWindowPanel(
   private val codeIdModel = SpinnerNumberModel(0, 0, 99_999, 1)
   private val codeID: JSpinner = JSpinner(codeIdModel)
   private val label: JTextField = JTextField()
+  private val gasForInstantiationModel = SpinnerNumberModel(200_000, 100_000, 6_000_000, 100)
+  private val gasForInstantiation: JSpinner = JSpinner(gasForInstantiationModel)
   private val message: JTextArea = JTextArea()
 
   private val seed = JPasswordField()
@@ -76,7 +78,7 @@ class BuildAndDeployPanel(private val project: Project) : SimpleToolWindowPanel(
         "secretcli tx compute instantiate " +
             codeID.value +
             " \"${jsonWithQuotes}\" --label '${label.text}'" +
-            " --from 'SecretIDE-Deployment' -y"
+            " --from 'SecretIDE-Deployment' --gas '${gasForInstantiation.value}' -y"
     val terminalView: TerminalView = TerminalView.getInstance(project)
     try {
       val shell = terminalView.createLocalShellWidget(project.basePath, "Instantiation")
@@ -102,6 +104,7 @@ class BuildAndDeployPanel(private val project: Project) : SimpleToolWindowPanel(
       row("Code ID:") { codeID() }
       row("Label:") { label() }
       row("Input:") { message() }
+      row("Gas:") { gasForInstantiation() }
       row { button("Instantiate") { instantiate() } }
     }
   }
