@@ -5,24 +5,21 @@ import com.intellij.execution.RunManager
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
-import com.intellij.openapi.roots.ModifiableRootModel
-import createProjectFromSubFolderInRepo
-import createProjectUsingCargoGenerate
-import java.nio.file.Paths
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.io.readText
 import com.intellij.util.io.write
 import createBuildActionsFromMakefile
+import java.nio.file.Paths
 import java.util.UUID.randomUUID
 import kotlin.math.roundToInt
 
-
 class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
-  var data: SecretNetworkSNIP721ContractProjectCreationWizard? = null;
+  var data: SecretNetworkSNIP721ContractProjectCreationWizard? = null
 
   override fun setupRootModel(model: ModifiableRootModel) {
     val root = doAddContentEntry(model)?.file ?: return
@@ -31,23 +28,24 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
     val project = model.project
     val name = project.name.replace(' ', '_')
     object : Task.Modal(project, "Creating Project", false) {
-      override fun run(indicator: ProgressIndicator) {
-        indicator.isIndeterminate = true
-        val template = ContractTemplate(
-          RepoType.url,
-          "https://github.com/luminaryphi/secret-random-minting-snip721-impl.git",
-          "secret-random-minting-snip721-impl",
-          "",
-        )
-        val path = Paths.get(project.basePath)
-        cloneRepo(template.url, path, name)
-        val deployFile = path.resolve("deploy.sh")
-        val initJsonFile = path.resolve("init.json")
-        val contractRsFile = path.resolve("src/contract.rs")
-        val entropy = randomUUID().toString()
-        val royalty = ((data!!.royaltyPercentage.text).toFloat() * 100).roundToInt()
-        deployFile.write(
-          """
+          override fun run(indicator: ProgressIndicator) {
+            indicator.isIndeterminate = true
+            val template =
+                ContractTemplate(
+                    RepoType.url,
+                    "https://github.com/luminaryphi/secret-random-minting-snip721-impl.git",
+                    "secret-random-minting-snip721-impl",
+                    "",
+                )
+            val path = Paths.get(project.basePath)
+            cloneRepo(template.url, path, name)
+            val deployFile = path.resolve("deploy.sh")
+            val initJsonFile = path.resolve("init.json")
+            val contractRsFile = path.resolve("src/contract.rs")
+            val entropy = randomUUID().toString()
+            val royalty = ((data!!.royaltyPercentage.text).toFloat() * 100).roundToInt()
+            deployFile.write(
+                """
           #!/bin/bash
           set -e
           cd ${path.toAbsolutePath()}
@@ -59,7 +57,7 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
           if [[ "testnet" == "${'$'}network" ]]; then
             echo "Deploying to testnet"
             secretcli config chain-id pulsar-2
-            secretcli config node https://rpc.pulsar.scrttestnet.com
+            secretcli config node https://rpc.pulsar.scrttestnet.com:443
           else
             echo "Deploying to mainnet"
             secretcli config chain-id secret-4
@@ -71,14 +69,14 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
           secretcli keys delete SecretIDE-Deployment -y
           echo "${'$'}seed" | secretcli keys add SecretIDE-Deployment --recover
           clear
-          codeId=${'$'}(secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas "${'$'}gas" -y | jq '.logs[0].events[0].attributes[3].value')
+          codeId=${'$'}(secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas "${'$'}gas" -y | jq '.logs[0].events[0].attributes[] | select(.key=="code_id").value')
           echo "Contract stored successfully! Code ID: ${'$'}codeId"
           initMsg=${'$'}(cat init.json)
           secretcli tx compute instantiate "${'$'}codeId" --from SecretIDE-Deployment --gas "${'$'}gas" "${'$'}initMsg"
           """.trimIndent()
-        )
-        initJsonFile.write(
-          """
+            )
+            initJsonFile.write(
+                """
             {
               "name": "${data!!.collectionName.text}",
               "symbol": "${data!!.collectionSymbol.text}",
@@ -114,30 +112,32 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
               }
             }
           """.trimIndent()
-        )
-        contractRsFile.write(
-          contractRsFile
-            .readText()
-            .replace(
-              "pub const MINT_COST: u128 = 10000000",
-              "pub const MINT_COST: u128 = ${data!!.price.text.toLong() * 1_000_000}"
             )
-        )
-        createBuildActionsFromMakefile(project, path)
-        val runManager = RunManager.getInstance(project)
-        val config = runManager.createConfiguration(
-          "quick-deploy",
-          SecretNetworkContractConfigurationFactory(
-            SecretNetworkContractConfigurationType()
-          ),
-        )
-        runManager.addConfiguration(config)
-        runManager.selectedConfiguration = config
-        var makefileContents = path.resolve("Makefile").readText()
-        makefileContents += "\n\nquick-deploy:\n\tbash ./deploy.sh"
-        path.resolve("Makefile").write(makefileContents)
-      }
-    }.queue()
+            contractRsFile.write(
+                contractRsFile
+                    .readText()
+                    .replace(
+                        "pub const MINT_COST: u128 = 10000000",
+                        "pub const MINT_COST: u128 = ${data!!.price.text.toLong() * 1_000_000}"
+                    )
+            )
+            createBuildActionsFromMakefile(project, path)
+            val runManager = RunManager.getInstance(project)
+            val config =
+                runManager.createConfiguration(
+                    "quick-deploy",
+                    SecretNetworkContractConfigurationFactory(
+                        SecretNetworkContractConfigurationType()
+                    ),
+                )
+            runManager.addConfiguration(config)
+            runManager.selectedConfiguration = config
+            var makefileContents = path.resolve("Makefile").readText()
+            makefileContents += "\n\nquick-deploy:\n\tbash ./deploy.sh"
+            path.resolve("Makefile").write(makefileContents)
+          }
+        }
+        .queue()
   }
 
   @Suppress("DialogTitleCapitalization")
@@ -145,7 +145,10 @@ class SecretIDESNIP721ModuleBuilder : ModuleBuilder() {
     return SecretIDESNIP721ModuleType.instance
   }
 
-  override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): ModuleWizardStep {
+  override fun getCustomOptionsStep(
+      context: WizardContext,
+      parentDisposable: Disposable
+  ): ModuleWizardStep {
     return SecretIDESNIP721ModuleWizardStep(this, context).apply {
       Disposer.register(parentDisposable, this::disposeUIResources)
     }

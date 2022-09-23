@@ -7,13 +7,12 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.layout.panel
 import com.intellij.ui.layout.separatorAndComment
-import org.jetbrains.plugins.terminal.TerminalView
 import java.io.File
 import java.io.IOException
 import javax.swing.*
+import org.jetbrains.plugins.terminal.TerminalView
 
-class BuildAndDeployPanel(private val project: Project) :
-    SimpleToolWindowPanel(true, false) {
+class BuildAndDeployPanel(private val project: Project) : SimpleToolWindowPanel(true, false) {
   private val codeIdModel = SpinnerNumberModel(0, 0, 99_999, 1)
   private val codeID: JSpinner = JSpinner(codeIdModel)
   private val label: JTextField = JTextField()
@@ -40,7 +39,7 @@ class BuildAndDeployPanel(private val project: Project) :
         return
       }
 
-      val gas = (contractFile.length() * 6).coerceAtMost(6_000_000)
+      val gas = (contractFile.length() * 7).coerceAtMost(6_000_000)
       val seedFile = File(System.getProperty("user.home") + "/.Secret-IDE-seed")
       if (seedFile.exists()) seedFile.delete()
       val shell = terminalView.createLocalShellWidget(project.basePath, "Deployment")
@@ -48,7 +47,7 @@ class BuildAndDeployPanel(private val project: Project) :
       shell.executeCommand("clear")
       if (networkSelector.selectedItem == "Pulsar-2 Testnet") {
         shell.executeCommand("secretcli config chain-id pulsar-2")
-        shell.executeCommand("secretcli config node https://rpc.pulsar.scrttestnet.com")
+        shell.executeCommand("secretcli config node https://rpc.pulsar.scrttestnet.com:443")
       } else {
         shell.executeCommand("secretcli config chain-id secret-4")
         shell.executeCommand("secretcli config node https://scrt-validator.digiline.io:26657")
@@ -62,9 +61,9 @@ class BuildAndDeployPanel(private val project: Project) :
       )
       shell.executeCommand("clear")
       shell.executeCommand(
-          "codeId=$(secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas $gas -y | jq '.logs[0].events[0].attributes[3].value')"
+          """codeId=$(secretcli tx compute store contract.wasm.gz --from SecretIDE-Deployment --gas $gas -y | jq '.logs[0].events[0].attributes[] | select(.key=="code_id").value"""
       )
-      shell.executeCommand("echo \"Contract stored successfully! Code ID: \$codeId\"")
+      shell.executeCommand("echo \"Contract stored successfully! Code ID: \${'$'}codeId\"")
     } catch (err: IOException) {
       err.printStackTrace()
     }
@@ -72,17 +71,12 @@ class BuildAndDeployPanel(private val project: Project) :
 
   private fun instantiate() {
     val jsonWithQuotes =
-      message
-        .text
-        .replace("\"", "\\\"")
-        .replace("\n", "")
-        .replace("\r", "")
-        .replace("\$", "\\\$")
+        message.text.replace("\"", "\\\"").replace("\n", "").replace("\r", "").replace("\$", "\\\$")
     val command =
-      "secretcli tx compute instantiate " +
-              codeID.value +
-              " \"${jsonWithQuotes}\" --label '${label.text}'" +
-              " --from 'SecretIDE-Deployment' -y"
+        "secretcli tx compute instantiate " +
+            codeID.value +
+            " \"${jsonWithQuotes}\" --label '${label.text}'" +
+            " --from 'SecretIDE-Deployment' -y"
     val terminalView: TerminalView = TerminalView.getInstance(project)
     try {
       val shell = terminalView.createLocalShellWidget(project.basePath, "Instantiation")
@@ -108,11 +102,7 @@ class BuildAndDeployPanel(private val project: Project) :
       row("Code ID:") { codeID() }
       row("Label:") { label() }
       row("Input:") { message() }
-      row {
-        button("Instantiate") {
-          instantiate()
-        }
-      }
+      row { button("Instantiate") { instantiate() } }
     }
   }
 }
